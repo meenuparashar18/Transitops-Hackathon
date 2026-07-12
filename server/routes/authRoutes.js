@@ -1,27 +1,19 @@
-import express from "express";
-import {
-  login,
-  getCurrentUser,
-  getDrivers,
-  getDriver,
-  createDriver,
-  updateDriver,
-  deleteDriver
-} from "../controllers/authController.js";
+import { Router } from 'express';
+import { login, getCurrentUser } from '../controllers/authController.js';
+import { getDrivers, getDriver, createDriver, updateDriver, deleteDriver } from '../controllers/driverController.js';
+import { authenticateToken, requireRole } from '../middleware/authMiddleware.js';
 
-import { authenticateToken } from "../middleware/authMiddleware.js";
+const router = Router();
 
-const router = express.Router();
+// Auth endpoints
+router.post('/auth/login', login);
+router.get('/auth/me', authenticateToken, getCurrentUser);
 
-// Authentication
-router.post("/login", login);
-router.get("/me", authenticateToken, getCurrentUser);
-
-// Driver Routes
-router.get("/drivers", authenticateToken, getDrivers);
-router.get("/drivers/:id", authenticateToken, getDriver);
-router.post("/drivers", authenticateToken, createDriver);
-router.put("/drivers/:id", authenticateToken, updateDriver);
-router.delete("/drivers/:id", authenticateToken, deleteDriver);
+// Driver Management endpoints
+router.get('/drivers', authenticateToken, getDrivers);
+router.get('/drivers/:id', authenticateToken, getDriver);
+router.post('/drivers', authenticateToken, requireRole(['Fleet Manager', 'Safety Officer']), createDriver);
+router.put('/drivers/:id', authenticateToken, requireRole(['Fleet Manager', 'Safety Officer']), updateDriver);
+router.delete('/drivers/:id', authenticateToken, requireRole(['Fleet Manager']), deleteDriver);
 
 export default router;
