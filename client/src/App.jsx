@@ -1,10 +1,36 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import MainLayout from "./layouts/MainLayout";
+
+import Dashboard from "./pages/Dashboard";
+import Vehicles from "./pages/Vehicles";
+import Drivers from "./pages/Drivers";
+import Shipments from "./pages/Shipments";
+import Alerts from "./pages/Alerts";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold text-blue-600">
-        TransitOps Hackathon 🚛
-      </h1>
-    </div>
+    <Routes>
+
+      {/* Login Page */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Main Layout */}
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="vehicles" element={<Vehicles />} />
+        <Route path="drivers" element={<Drivers />} />
+        <Route path="shipments" element={<Shipments />} />
+        <Route path="alerts" element={<Alerts />} />
+      </Route>
+
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+
+    </Routes>
   );
 }
 
