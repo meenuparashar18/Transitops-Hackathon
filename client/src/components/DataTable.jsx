@@ -1,16 +1,12 @@
 const DataTable = ({ columns = [], data = [] }) => {
   return (
-    <div className="bg-white rounded-xl shadow overflow-x-auto">
+    <div className="overflow-x-auto bg-white rounded-xl shadow">
       <table className="w-full">
-
         <thead className="bg-gray-100">
           <tr>
-            {columns.map((col, index) => (
-              <th
-                key={index}
-                className="text-left px-5 py-3"
-              >
-                {col}
+            {columns.map((item, index) => (
+              <th key={index} className="p-3 text-left">
+                {item}
               </th>
             ))}
           </tr>
@@ -21,30 +17,23 @@ const DataTable = ({ columns = [], data = [] }) => {
             <tr>
               <td
                 colSpan={columns.length}
-                className="text-center py-5 text-gray-500"
+                className="text-center py-5"
               >
-                No Data Found
+                No Data Available
               </td>
             </tr>
           ) : (
-            data.map((row, index) => (
-              <tr
-                key={index}
-                className="border-t"
-              >
-                {row.map((item, i) => (
-                  <td
-                    key={i}
-                    className="px-5 py-3"
-                  >
-                    {item}
+            data.map((row, i) => (
+              <tr key={i} className="border-t">
+                {row.map((cell, j) => (
+                  <td key={j} className="p-3">
+                    {cell}
                   </td>
                 ))}
               </tr>
             ))
           )}
         </tbody>
-
       </table>
     </div>
   );
