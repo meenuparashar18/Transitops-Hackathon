@@ -1,21 +1,27 @@
-const express = require("express");
+import express from "express";
+import {
+  login,
+  getCurrentUser,
+  getDrivers,
+  getDriver,
+  createDriver,
+  updateDriver,
+  deleteDriver
+} from "../controllers/authController.js";
+
+import { authenticateToken } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-// Controller import (later)
-// const authController = require("../controllers/authController");
+// Authentication
+router.post("/login", login);
+router.get("/me", authenticateToken, getCurrentUser);
 
-// Authentication Routes
+// Driver Routes
+router.get("/drivers", authenticateToken, getDrivers);
+router.get("/drivers/:id", authenticateToken, getDriver);
+router.post("/drivers", authenticateToken, createDriver);
+router.put("/drivers/:id", authenticateToken, updateDriver);
+router.delete("/drivers/:id", authenticateToken, deleteDriver);
 
-// Register User
-router.post("/register");
-
-// Login User
-router.post("/login");
-
-// Logout User
-router.post("/logout");
-
-// Get Logged-in User Profile
-router.get("/profile");
-
-module.exports = router;
+export default router;
