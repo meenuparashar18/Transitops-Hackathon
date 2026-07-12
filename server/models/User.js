@@ -1,24 +1,20 @@
-export const UserSchema = {
-    email: { type: String, required: true },
+import mongoose from 'mongoose';
+
+const UserSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ['Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst'] }
-};
+}, { timestamps: true });
 
-export class User {
-    constructor({ email, password, role }) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
+const DriverSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    licenseNumber: { type: String, required: true, unique: true, uppercase: true, trim: true },
+    licenseCategory: { type: String, required: true },
+    licenseExpiryDate: { type: String, required: true },
+    contactNumber: { type: String, required: true },
+    safetyScore: { type: Number, required: true, default: 100 },
+    status: { type: String, required: true, enum: ['Available', 'On Trip', 'Off Duty', 'Suspended'], default: 'Available' }
+}, { timestamps: true });
 
-    static validate(data) {
-        if (!data.email || typeof data.email !== 'string') return 'Email is required and must be a string';
-        if (!data.password || typeof data.password !== 'string') return 'Password is required and must be a string';
-
-        const allowedRoles = ['Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst'];
-        if (!data.role || !allowedRoles.includes(data.role)) {
-            return `Role is required and must be one of: ${allowedRoles.join(', ')}`;
-        }
-        return null;
-    }
-}
+export const User = mongoose.model('User', UserSchema);
+export const Driver = mongoose.model('Driver', DriverSchema);
