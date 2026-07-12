@@ -1,4 +1,4 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardLayout from "../layouts/MainLayout";
 
 const Alerts = () => {
   return (
