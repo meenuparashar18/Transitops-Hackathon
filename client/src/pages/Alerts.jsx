@@ -1,9 +1,6 @@
-import DashboardLayout from "../layouts/MainLayout";
-
 const Alerts = () => {
   return (
-    <DashboardLayout>
-
+    <>
       <h1 className="text-3xl font-bold mb-5">
         Alerts
       </h1>
@@ -23,8 +20,7 @@ const Alerts = () => {
         </div>
 
       </div>
-
-    </DashboardLayout>
+    </>
   );
 };
 

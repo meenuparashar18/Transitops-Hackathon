@@ -1,9 +1,6 @@
-import DashboardLayout from "../layouts/MainLayout";
-
 const Vehicles = () => {
   return (
-    <DashboardLayout>
-
+    <>
       <div className="flex justify-between mb-5">
         <h1 className="text-3xl font-bold">Vehicles</h1>
 
@@ -38,8 +35,7 @@ const Vehicles = () => {
           </tr>
         </tbody>
       </table>
-
-    </DashboardLayout>
+    </>
   );
 };
 

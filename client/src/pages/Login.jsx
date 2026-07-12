@@ -1,10 +1,21 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleLogin = (e) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please enter Email and Password");
+      return;
+    }
+
+    // Temporary Login
     navigate("/dashboard");
   };
 
@@ -20,16 +31,21 @@ const Login = () => {
             type="email"
             placeholder="Email"
             className="w-full border p-3 rounded mb-4"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
             type="password"
             placeholder="Password"
             className="w-full border p-3 rounded mb-6"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
-            className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+            type="submit"
+            className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition"
           >
             Login
           </button>
