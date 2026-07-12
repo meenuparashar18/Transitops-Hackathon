@@ -1,16 +1,13 @@
 import { Navigate } from "react-router-dom";
 
-export default function ProtectedRoute({ children }) {
-  // Abhi ke liye dummy authentication
-  const isAuthenticated = true;
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
 
-  // Baad me login hone par token check karenge
-  // const token = localStorage.getItem("token");
-  // const isAuthenticated = !!token;
-
-  if (!isAuthenticated) {
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
   return children;
-}
+};
+
+export default ProtectedRoute;

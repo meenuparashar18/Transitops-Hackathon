@@ -1,9 +1,9 @@
-const StatCard = ({ title, value, color = "blue" }) => {
+const StatCard = ({ title, value }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-5 border-l-4 border-blue-500">
+    <div className="bg-white rounded-xl shadow p-5">
       <h3 className="text-gray-500 text-sm">{title}</h3>
 
-      <h2 className={`text-3xl font-bold text-${color}-600 mt-2`}>
+      <h2 className="text-3xl font-bold text-blue-600 mt-2">
         {value}
       </h2>
     </div>
