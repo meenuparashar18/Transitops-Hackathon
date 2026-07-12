@@ -41,7 +41,7 @@ export const createShipment = async (req, res, next) => {
     if (!vehicle) return res.status(404).json({ error: 'Vehicle not found.' });
     if (!driver) return res.status(404).json({ error: 'Driver not found.' });
 
-    // Weight capacity checks
+    // Weight capacity limit
     if (Number(cargoWeight) > vehicle.maxLoadCapacity) {
       return res.status(400).json({ error: `Cargo weight (${cargoWeight} kg) exceeds vehicle's maximum load capacity (${vehicle.maxLoadCapacity} kg).` });
     }
@@ -109,7 +109,7 @@ export const dispatchShipment = async (req, res, next) => {
     if (vehicle.status === 'On Trip') return res.status(400).json({ error: 'Vehicle is already assigned to an active trip.' });
     if (driver.status === 'Suspended') return res.status(400).json({ error: 'Driver is Suspended.' });
     if (driver.status === 'On Trip') return res.status(400).json({ error: 'Driver is already on an active trip.' });
-
+    
     const today = new Date().toISOString().split('T')[0];
     if (driver.licenseExpiryDate < today) {
       return res.status(400).json({ error: `Driver's license is expired (Expiry: ${driver.licenseExpiryDate}).` });
@@ -122,6 +122,7 @@ export const dispatchShipment = async (req, res, next) => {
     await trip.save();
     await vehicle.save();
     await driver.save();
+
     return res.json(trip);
   } catch (err) {
     next(err);
@@ -189,6 +190,7 @@ export const completeShipment = async (req, res, next) => {
     await trip.save();
     await newFuelLog.save();
     await newExpense.save();
+
     return res.json(trip);
   } catch (err) {
     next(err);
@@ -221,6 +223,7 @@ export const cancelShipment = async (req, res, next) => {
 
     trip.status = 'Cancelled';
     await trip.save();
+
     return res.json(trip);
   } catch (err) {
     next(err);
@@ -229,6 +232,7 @@ export const cancelShipment = async (req, res, next) => {
 
 export const runDemoWorkflow = async (req, res, next) => {
   try {
+    // Clear existing Demo runs to ensure idempotency
     await Vehicle.deleteOne({ registrationNumber: 'VAN-05' });
     await Driver.deleteOne({ licenseNumber: 'DL-ALEX' });
     await Shipment.deleteOne({ id: 'TRIP-DEMO' });
@@ -238,6 +242,7 @@ export const runDemoWorkflow = async (req, res, next) => {
 
     const log = [];
 
+    // Step 1: Register vehicle
     const van05 = new Vehicle({
       registrationNumber: 'VAN-05',
       name: 'Ram ProMaster 2500',
@@ -251,6 +256,7 @@ export const runDemoWorkflow = async (req, res, next) => {
     await van05.save();
     log.push("Step 1: Registered vehicle 'VAN-05' (Capacity: 500kg, Status: Available).");
 
+    // Step 2: Register driver
     const alex = new Driver({
       name: 'Alex Mercer',
       licenseNumber: 'DL-ALEX',
@@ -263,6 +269,7 @@ export const runDemoWorkflow = async (req, res, next) => {
     await alex.save();
     log.push("Step 2: Registered driver 'Alex' (License: DL-ALEX, Expiry: 2028-12-31, Status: Available).");
 
+    // Step 3 & 4: Capacity check & Dispatch
     const tripDemo = new Shipment({
       id: 'TRIP-DEMO',
       source: 'Chicago, IL',
@@ -284,6 +291,7 @@ export const runDemoWorkflow = async (req, res, next) => {
       return res.status(400).json({ error: 'Cargo capacity violation in demo workflow' });
     }
 
+    // Step 5: Automatic On Trip States
     van05.status = 'On Trip';
     alex.status = 'On Trip';
     await van05.save();
@@ -291,6 +299,7 @@ export const runDemoWorkflow = async (req, res, next) => {
     await tripDemo.save();
     log.push("Step 5: Trip dispatched. Vehicle 'VAN-05' status set to 'On Trip'. Driver 'Alex' status set to 'On Trip'.");
 
+    // Step 6: Complete trip, log odometer & fuel consumption
     tripDemo.status = 'Completed';
     tripDemo.finalOdometer = 5450;
     tripDemo.fuelConsumed = 40;
@@ -319,12 +328,14 @@ export const runDemoWorkflow = async (req, res, next) => {
     await demoFuelExp.save();
     log.push("Step 6: Completed trip. Entered final odometer 5450 km and fuel consumed 40 L.");
 
+    // Step 7: Reset Available status
     van05.status = 'Available';
     alex.status = 'Available';
     await van05.save();
     await alex.save();
     log.push("Step 7: System marked Vehicle 'VAN-05' and Driver 'Alex' back to 'Available'.");
 
+    // Step 8: Log Maintenance change to In Shop
     const mntDemo = new MaintenanceLog({
       id: 'MNT-DEMO',
       vehicleId: 'VAN-05',
@@ -334,7 +345,7 @@ export const runDemoWorkflow = async (req, res, next) => {
       endDate: null,
       status: 'Active'
     });
-
+    
     const demoMntExp = new Expense({
       id: 'EXP-DEMO-MNT',
       vehicleId: 'VAN-05',
@@ -353,191 +364,6 @@ export const runDemoWorkflow = async (req, res, next) => {
     log.push("Step 9: Reports successfully updated. 'VAN-05' Fuel Efficiency calculated as 11.25 km/L. Total Operational Cost calculated as $180.");
 
     return res.json({ log });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getExpenses = async (req, res, next) => {
-  try {
-    const expenses = await Expense.find({});
-    return res.json(expenses);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const createExpense = async (req, res, next) => {
-  try {
-    const { vehicleId, type, amount, date, notes } = req.body;
-
-    if (!vehicleId || !type || amount === undefined) {
-      return res.status(400).json({ error: 'Vehicle ID, type, and amount are required.' });
-    }
-
-    const newExpense = new Expense({
-      id: `EXP-${Date.now().toString().slice(-4)}`,
-      vehicleId: vehicleId.toUpperCase(),
-      type,
-      amount: Number(amount),
-      date: date || new Date().toISOString().split('T')[0],
-      notes: notes || ''
-    });
-
-    await newExpense.save();
-    return res.status(201).json(newExpense);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const deleteExpense = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const result = await Expense.deleteOne({ id });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Expense not found' });
-    }
-    return res.json({ message: 'Expense deleted successfully' });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getFuelLogs = async (req, res, next) => {
-  try {
-    const fuelLogs = await FuelLog.find({});
-    return res.json(fuelLogs);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const createFuelLog = async (req, res, next) => {
-  try {
-    const { vehicleId, liters, cost, odometer, date } = req.body;
-
-    if (!vehicleId || liters === undefined || cost === undefined || odometer === undefined) {
-      return res.status(400).json({ error: 'Vehicle ID, liters, cost, and odometer are required.' });
-    }
-
-    const fuelLogId = `FUEL-${Date.now().toString().slice(-4)}`;
-    const newLog = new FuelLog({
-      id: fuelLogId,
-      vehicleId: vehicleId.toUpperCase(),
-      liters: Number(liters),
-      cost: Number(cost),
-      odometer: Number(odometer),
-      date: date || new Date().toISOString().split('T')[0]
-    });
-
-    const newExpense = new Expense({
-      id: `EXP-${Date.now().toString().slice(-4)}`,
-      vehicleId: vehicleId.toUpperCase(),
-      type: 'Fuel',
-      amount: Number(cost),
-      date: date || new Date().toISOString().split('T')[0],
-      notes: `Manual fuel log entry (${fuelLogId})`
-    });
-
-    await newLog.save();
-    await newExpense.save();
-    return res.status(201).json(newLog);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getReportsAndKpis = async (req, res, next) => {
-  try {
-    const vehicles = await Vehicle.find({});
-    const drivers = await Driver.find({});
-    const trips = await Shipment.find({});
-    const expenses = await Expense.find({});
-
-    const { region, vehicleType, status } = req.query;
-
-    let filteredVehicles = [...vehicles];
-    if (region) filteredVehicles = filteredVehicles.filter(v => v.region === region);
-    if (vehicleType) filteredVehicles = filteredVehicles.filter(v => v.type === vehicleType);
-    if (status) filteredVehicles = filteredVehicles.filter(v => v.status === status);
-
-    const filteredVehicleIds = new Set(filteredVehicles.map(v => v.registrationNumber));
-    const filteredTrips = trips.filter(t => filteredVehicleIds.has(t.vehicleId));
-
-    const totalVehiclesCount = filteredVehicles.length;
-    const activeVehiclesCount = filteredVehicles.filter(v => v.status === 'On Trip').length;
-    const availableVehiclesCount = filteredVehicles.filter(v => v.status === 'Available').length;
-    const maintenanceVehiclesCount = filteredVehicles.filter(v => v.status === 'In Shop').length;
-    const retiredVehiclesCount = filteredVehicles.filter(v => v.status === 'Retired').length;
-
-    const activeTripsCount = filteredTrips.filter(t => t.status === 'Dispatched').length;
-    const pendingTripsCount = filteredTrips.filter(t => t.status === 'Draft').length;
-    const driversOnDutyCount = drivers.filter(d => ['Available', 'On Trip'].includes(d.status)).length;
-
-    const activeFleetSize = totalVehiclesCount - retiredVehiclesCount;
-    const fleetUtilization = activeFleetSize > 0 ? Math.round((activeVehiclesCount / activeFleetSize) * 100) : 0;
-
-    const vehicleReports = filteredVehicles.map(vehicle => {
-      const vId = vehicle.registrationNumber;
-      const vExpenses = expenses.filter(e => e.vehicleId === vId);
-      const fuelCost = vExpenses.filter(e => e.type === 'Fuel').reduce((sum, e) => sum + e.amount, 0);
-      const maintenanceCost = vExpenses.filter(e => e.type === 'Maintenance').reduce((sum, e) => sum + e.amount, 0);
-      const totalOperationalCost = fuelCost + maintenanceCost;
-
-      const vTrips = trips.filter(t => t.vehicleId === vId && t.status === 'Completed');
-      const totalDistance = vTrips.reduce((sum, t) => sum + t.plannedDistance, 0);
-      const totalFuelConsumed = vTrips.reduce((sum, t) => sum + (t.fuelConsumed || 0), 0);
-      const totalRevenue = vTrips.reduce((sum, t) => sum + t.revenue, 0);
-
-      const fuelEfficiency = totalFuelConsumed > 0 ? Number((totalDistance / totalFuelConsumed).toFixed(2)) : 0;
-      const roiVal = vehicle.acquisitionCost > 0 ? Number(((totalRevenue - totalOperationalCost) / vehicle.acquisitionCost).toFixed(4)) : 0;
-
-      return {
-        registrationNumber: vId,
-        name: vehicle.name,
-        type: vehicle.type,
-        status: vehicle.status,
-        acquisitionCost: vehicle.acquisitionCost,
-        fuelCost,
-        maintenanceCost,
-        totalOperationalCost,
-        totalDistance,
-        totalFuelConsumed,
-        fuelEfficiency,
-        totalRevenue,
-        roi: roiVal
-      };
-    });
-
-    const totalRevenueSum = vehicleReports.reduce((sum, r) => sum + r.totalRevenue, 0);
-    const totalFuelCostSum = vehicleReports.reduce((sum, r) => sum + r.fuelCost, 0);
-    const totalMaintenanceCostSum = vehicleReports.reduce((sum, r) => sum + r.maintenanceCost, 0);
-    const totalOperationalCostSum = totalFuelCostSum + totalMaintenanceCostSum;
-    const netProfit = totalRevenueSum - totalOperationalCostSum;
-
-    return res.json({
-      kpis: {
-        totalVehicles: totalVehiclesCount,
-        activeVehicles: activeVehiclesCount,
-        availableVehicles: availableVehiclesCount,
-        vehiclesInMaintenance: maintenanceVehiclesCount,
-        retiredVehicles: retiredVehiclesCount,
-        activeTrips: activeTripsCount,
-        pendingTrips: pendingTripsCount,
-        driversOnDuty: driversOnDutyCount,
-        fleetUtilization
-      },
-      financials: {
-        totalRevenue: totalRevenueSum,
-        totalFuelCost: totalFuelCostSum,
-        totalMaintenanceCost: totalMaintenanceCostSum,
-        totalOperationalCost: totalOperationalCostSum,
-        netProfit
-      },
-      vehicleReports
-    });
   } catch (err) {
     next(err);
   }

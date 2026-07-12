@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'transitops_super_secret_jwt_key_2026';
