@@ -22,10 +22,15 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="bg-white mt-8 rounded-xl shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Recent Activities
-        </h2>
+      <table className="w-full bg-white rounded-xl shadow">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-3">Registration</th>
+            <th>Model</th>
+            <th>Capacity</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
         <ul className="space-y-3">
           <li>🚚 Truck MH12AB1234 dispatched.</li>
@@ -37,4 +42,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Vehicles;
