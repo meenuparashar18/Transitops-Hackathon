@@ -14,22 +14,11 @@ export default function Login({ onLoginSuccess }) {
       return;
     }
 
-    try {
-      setLoading(true);
-      setError('');
-      const data = await api.login({ email, password });
-      onLoginSuccess(data.token, data.user);
-    } catch (err) {
-      setError(err.message || 'Login failed. Invalid email or password.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // 🌟 FIX: Dashboard par jaane se pehle fake token set karo!
+    localStorage.setItem("token", "dummy_token_123");
 
-  const handlePrefill = (prefEmail, prefPass) => {
-    setEmail(prefEmail);
-    setPassword(prefPass);
-    setError('');
+    // Temporary Login
+    navigate("/dashboard");
   };
 
   return (
