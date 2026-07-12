@@ -15,6 +15,9 @@ const Login = () => {
       return;
     }
 
+    // 🌟 FIX: Dashboard par jaane se pehle fake token set karo!
+    localStorage.setItem("token", "dummy_token_123");
+
     // Temporary Login
     navigate("/dashboard");
   };

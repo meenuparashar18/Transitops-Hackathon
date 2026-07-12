@@ -1,13 +1,13 @@
-import { Navigate } from "react-router-dom";
+import React from 'react';
 
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
+export default function ProtectedRoute({ token, user, allowedRoles, children }) {
+  if (!token || !user) {
+    return <div className="alert-banner alert-banner-danger">Not Authenticated: Please sign in.</div>;
   }
-
+  
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <div className="alert-banner alert-banner-danger">Access Denied: Insufficient permissions.</div>;
+  }
+  
   return children;
-};
-
-export default ProtectedRoute;
+}

@@ -1,20 +1,10 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
 
-const MainLayout = () => {
-  return (
-    <div className="flex">
-      <Sidebar />
-
-      <div className="flex-1">
-        <Navbar />
-        <main className="p-6">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default MainLayout;
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
