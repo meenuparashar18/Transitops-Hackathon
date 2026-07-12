@@ -1,33 +1,27 @@
-import 'dotenv/config';
-import jwt from 'jsonwebtoken';
+import express from "express";
+import {
+  login,
+  getCurrentUser,
+  getDrivers,
+  getDriver,
+  createDriver,
+  updateDriver,
+  deleteDriver
+} from "../controllers/authController.js";
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'transitops_super_secret_jwt_key_2026';
+import { authenticateToken } from "../middleware/authMiddleware.js";
 
-export const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+const router = express.Router();
 
-    if (!token) {
-        return res.status(401).json({ error: 'Access token required' });
-    }
+// Authentication
+router.post("/login", login);
+router.get("/me", authenticateToken, getCurrentUser);
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid or expired token' });
-        }
-        req.user = user;
-        next();
-    });
-};
+// Driver Routes
+router.get("/drivers", authenticateToken, getDrivers);
+router.get("/drivers/:id", authenticateToken, getDriver);
+router.post("/drivers", authenticateToken, createDriver);
+router.put("/drivers/:id", authenticateToken, updateDriver);
+router.delete("/drivers/:id", authenticateToken, deleteDriver);
 
-export const requireRole = (allowedRoles) => {
-    return (req, res, next) => {
-        if (!req.user || !req.user.role) {
-            return res.status(403).json({ error: 'Access denied: User context missing' });
-        }
-        if (!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({ error: `Access denied: Requires role ${allowedRoles.join(' or ')}` });
-        }
-        next();
-    };
-};
+export default router;
