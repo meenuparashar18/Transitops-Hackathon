@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, Driver } from '../models/User.js';
-import { JWT_SECRET } from '../middleware/authMiddleware.js';
+
+// 🌟 FIX: Kisi doosri file se import karne par crash ho raha tha, isliye direct fallback de diya
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey123";
 
 export const login = async (req, res, next) => {
   try {
