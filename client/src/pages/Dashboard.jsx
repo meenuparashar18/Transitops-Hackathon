@@ -1,5 +1,3 @@
-import DashboardLayout from "../layouts/MainLayout";
-
 const Dashboard = () => {
   const stats = [
     { title: "Active Vehicles", value: 52 },
@@ -9,7 +7,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <DashboardLayout>
+    <>
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
       <div className="grid md:grid-cols-4 gap-5">
@@ -19,10 +17,7 @@ const Dashboard = () => {
             className="bg-white p-6 rounded-xl shadow"
           >
             <h2 className="text-gray-500">{item.title}</h2>
-
-            <p className="text-3xl font-bold mt-3">
-              {item.value}
-            </p>
+            <p className="text-3xl font-bold mt-3">{item.value}</p>
           </div>
         ))}
       </div>
@@ -38,7 +33,7 @@ const Dashboard = () => {
           <li>⚠ Maintenance due for Vehicle V-205.</li>
         </ul>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 
