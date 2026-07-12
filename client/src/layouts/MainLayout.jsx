@@ -4,20 +4,16 @@ import Sidebar from "../components/Sidebar";
 
 const MainLayout = () => {
   return (
-    <div className="flex h-screen bg-gray-100">
-
+    <div className="flex">
       <Sidebar />
 
-      <div className="flex flex-col flex-1">
-
+      <div className="flex-1">
         <Navbar />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="p-6">
           <Outlet />
         </main>
-
       </div>
-
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
-export default function Shipments({ user }) {
+export default function Trips({ user }) {
   const [trips, setTrips] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -51,7 +51,7 @@ export default function Shipments({ user }) {
       setVehicles(allVehicles);
       setDrivers(allDrivers);
     } catch (err) {
-      setError(err.message || 'Failed to fetch shipments');
+      setError(err.message || 'Failed to fetch trips');
     } finally {
       setLoading(false);
     }
@@ -104,7 +104,7 @@ export default function Shipments({ user }) {
       setCreateModalOpen(false);
       fetchTripsAndResources();
     } catch (err) {
-      setError(err.message || 'Failed to plan shipment');
+      setError(err.message || 'Failed to plan trip');
     }
   };
 
@@ -120,7 +120,7 @@ export default function Shipments({ user }) {
       setCompleteModalOpen(false);
       fetchTripsAndResources();
     } catch (err) {
-      setError(err.message || 'Failed to complete shipment');
+      setError(err.message || 'Failed to complete trip');
     }
   };
 
@@ -130,18 +130,18 @@ export default function Shipments({ user }) {
       await api.dispatchTrip(id);
       fetchTripsAndResources();
     } catch (err) {
-      setError(err.message || 'Failed to dispatch shipment');
+      setError(err.message || 'Failed to dispatch trip');
     }
   };
 
   const handleCancel = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this shipment?")) return;
+    if (!window.confirm("Are you sure you want to cancel this trip?")) return;
     try {
       setError('');
       await api.cancelTrip(id);
       fetchTripsAndResources();
     } catch (err) {
-      setError(err.message || 'Failed to cancel shipment');
+      setError(err.message || 'Failed to cancel trip');
     }
   };
 
@@ -156,7 +156,7 @@ export default function Shipments({ user }) {
   };
 
   // Eligibility Filters for Dropdowns
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date('2026-07-12').toISOString().split('T')[0];
   
   // Available vehicles must not be Retired, In Shop, or On Trip
   const eligibleVehicles = vehicles.filter(v => v.status === 'Available');
@@ -171,12 +171,12 @@ export default function Shipments({ user }) {
   const isWeightValid = !selectedVehicleObj || Number(formData.cargoWeight) <= selectedVehicleObj.maxLoadCapacity;
 
   return (
-    <div style={{ animation: 'tabFade 0.3s ease-out' }}>
+    <div>
       {error && <div className="alert-banner alert-banner-danger">{error}</div>}
 
       <div className="table-container">
         <div className="table-header-bar">
-          <h4 style={{ fontWeight: 600 }}>Active Dispatch & Shipment Log</h4>
+          <h4 style={{ fontWeight: 600 }}>Active Dispatch & Trip Log</h4>
           <div className="table-filters">
             <select 
               value={statusFilter} 
@@ -192,22 +192,22 @@ export default function Shipments({ user }) {
             </select>
             {canCreate && (
               <button className="btn btn-primary" onClick={handleOpenCreateModal}>
-                + Plan New Shipment
+                + Plan New Trip
               </button>
             )}
           </div>
         </div>
 
         {loading && trips.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading shipments history...</div>
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading trip history...</div>
         ) : trips.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>No shipments logged.</div>
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>No trips logged.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table>
               <thead>
                 <tr>
-                  <th>Shipment ID</th>
+                  <th>Trip ID</th>
                   <th>Route</th>
                   <th>Vehicle</th>
                   <th>Driver ID</th>
@@ -278,12 +278,12 @@ export default function Shipments({ user }) {
         )}
       </div>
 
-      {/* Plan Shipment Modal */}
+      {/* Plan Trip Modal */}
       {createModalOpen && (
         <div className="modal-overlay">
           <form className="modal-content" onSubmit={handleCreateSubmit}>
             <div className="modal-header">
-              <h3>Plan Cargo Shipment</h3>
+              <h3>Plan Transport Trip</h3>
               <button type="button" className="modal-close" onClick={() => setCreateModalOpen(false)}>&times;</button>
             </div>
             <div className="modal-body">
@@ -409,19 +409,19 @@ export default function Shipments({ user }) {
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => setCreateModalOpen(false)}>Cancel</button>
               <button type="submit" className="btn btn-primary" disabled={!isWeightValid || !formData.vehicleId || !formData.driverId}>
-                Schedule Shipment
+                Schedule Trip
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Complete Shipment Modal */}
+      {/* Complete Trip Modal */}
       {completeModalOpen && selectedTrip && (
         <div className="modal-overlay">
           <form className="modal-content" onSubmit={handleCompleteSubmit}>
             <div className="modal-header">
-              <h3>Log Shipment Completion: {selectedTrip.id}</h3>
+              <h3>Log Trip Completion: {selectedTrip.id}</h3>
               <button type="button" className="modal-close" onClick={() => setCompleteModalOpen(false)}>&times;</button>
             </div>
             <div className="modal-body">
@@ -460,7 +460,7 @@ export default function Shipments({ user }) {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => setCompleteModalOpen(false)}>Cancel</button>
-              <button type="submit" className="btn btn-primary">Complete Shipment</button>
+              <button type="submit" className="btn btn-primary">Complete and Log Fuel</button>
             </div>
           </form>
         </div>
