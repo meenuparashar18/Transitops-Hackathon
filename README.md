@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./screenshots/banner.png" alt="TransitOps Banner"/>
+  <img src="./banner.png" alt="TransitOps Banner"/>
 </p>
 
 <h1 align="center">🚌 TransitOps</h1>
@@ -67,19 +67,10 @@ Built with modern web technologies, the project demonstrates full-stack developm
 
 ### 🏠 Dashboard
 
-<img src="./screenshots/dashboard.png" width="900"/>
+<img src="./dashboard.png" width="900"/>
 
 <br><br>
 
-### 🗺️ Route Management
-
-<img src="./screenshots/routes.png" width="900"/>
-
-<br><br>
-
-### 📊 Analytics
-
-<img src="./screenshots/analytics.png" width="900"/>
 
 </div>
 
@@ -167,4 +158,3 @@ Working on this hackathon project helped me improve my skills in:
 <p align="center">
 🏆 Built with passion during a Hackathon 🚀
 </p>
-
