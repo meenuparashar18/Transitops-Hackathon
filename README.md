@@ -1,121 +1,170 @@
-# TransitOps — Smart Transport Operations Platform
+<p align="center">
+  <img src="./screenshots/banner.png" alt="TransitOps Banner"/>
+</p>
 
-TransitOps is a modern, high-fidelity enterprise transport management suite designed to replace fragile spreadsheets and manual logbooks. It provides real-time fleet analytics, enforces strict cargo capacity limits, monitors driver safety scores, schedules proactive vehicle maintenance, logs fuel consumption, tracks operational expenses, and offers secure Role-Based Access Control (RBAC).
+<h1 align="center">🚌 TransitOps</h1>
 
----
+<p align="center">
+A smart public transportation management platform developed during a hackathon to improve urban mobility through real-time transit tracking, route optimization, and data-driven insights.
+</p>
 
-## 🏗️ Project Architecture
+<p align="center">
 
-This application is built with a decoupled Client-Server architecture:
+<a href="YOUR_LIVE_DEMO_LINK">
+<img src="https://img.shields.io/badge/🚀_Live_Demo-00C853?style=for-the-badge"/>
+</a>
 
-```
-Transitops-HackathonADi/
-├── client/                  # React + Vite Frontend Application
-│   ├── src/
-│   │   ├── components/      # Shared modular UI components
-│   │   ├── pages/           # View modules (Dashboard, Registry, Roster, Planner, Shop, Ledger)
-│   │   ├── services/        # HTTP API library integration
-│   │   ├── assets/          # Global styles, fonts, variables
-│   │   ├── App.jsx          # Auth routing wrapper and top level state
-│   │   └── main.jsx         # React application bootstrap
-│   └── package.json
-│
-├── server/                  # Node.js + Express API Backend Server
-│   ├── config/              # Local database file seeding configuration
-│   ├── controllers/         # Business logic layer (validation and routing controllers)
-│   ├── middleware/          # Security (JWT) and RBAC verification rules
-│   ├── models/              # JSON database transactional helper models
-│   ├── server.js            # Express bootstrap and listener
-│   └── verify.js            # Programmatic test validation suite
-│
-├── README.md                # System documentation
-└── .gitignore               # Ignored build configurations
-```
+<a href="YOUR_GITHUB_REPO_LINK">
+<img src="https://img.shields.io/badge/💻_Source_Code-181717?style=for-the-badge&logo=github&logoColor=white"/>
+</a>
 
-### Tech Stack
-- **Frontend**: React (Vite), ES6 JavaScript, HTML5 Semantics, Vanilla CSS Custom Properties (Dark mode, glassmorphic layout, micro-animations, SVG graphing engine).
-- **Backend**: Node.js, Express.js, JWT (JSON Web Tokens), BcryptJS.
-- **Storage**: JSON-based file storage synced to disk via transactional I/O operations (`server/config/db.json`).
+</p>
+
+<p align="center">
+
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
+<img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
+<img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
+<img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
+<img src="https://img.shields.io/badge/REST_API-FF6F00?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github"/>
+
+</p>
 
 ---
 
-## 🔒 Security & Role-Based Access Control (RBAC)
+# 📖 About The Project
 
-Authentication is handled securely using JWT bearer headers. The platform segregates actions based on corporate profiles:
+TransitOps is a hackathon project designed to simplify public transportation management by providing real-time transit monitoring, route planning, and operational insights.
 
-| System Module | Fleet Manager | Driver | Safety Officer | Financial Analyst |
-| :--- | :---: | :---: | :---: | :---: |
-| **KPI Dashboard & Visual Charts** | Read | Read | Read | Read |
-| **Vehicle Registry & ROI Statistics** | CRUD | Read | - | Read |
-| **Driver Roster & Safety Scores** | CRUD | Read | CRUD | - |
-| **Trip Dispatch & Lifecycle** | CRUD | CRUD | Read | - |
-| **Maintenance Shop Logs** | CRUD | - | - | - |
-| **Expense & Fuel Ledger** | CRUD | Log Fuel | - | CRUD |
+The platform focuses on improving commuter experience through an intuitive interface, optimized transit operations, and efficient data visualization.
+
+Built with modern web technologies, the project demonstrates full-stack development, REST API integration, responsive design, and collaborative software development.
 
 ---
 
-## 🔄 Automated Business Rules Engine
+# ✨ Features
 
-The backend enforces strict constraints on database state transitions:
-1. **Capacity Validation**: Rejects any trip if cargo weight exceeds the assigned vehicle's load capacity.
-2. **Compliance Verification**: Locks drivers from dispatching if they have suspended licenses or if the license expiry date is past the current local date.
-3. **Dispatch Locking**: Changes both vehicle and driver statuses to `On Trip` on dispatch, removing them from subsequent selector pools to prevent double-booking.
-4. **Restoration States**: Completing or cancelling trips instantly returns the driver and vehicle statuses to `Available`.
-5. **Shop Sequestration**: Putting a vehicle in active maintenance automatically switches its registry status to `In Shop` (removing it from trip planners). Resolving maintenance restores it to `Available` (unless retired).
-6. **Ledger Syncing**: Completing trips automatically prompts for final odometer and fuel consumed, which generates real-time Fuel Logs and corresponding Expense Ledger rows.
+- 🚌 Real-Time Transit Dashboard
+- 📍 Live Vehicle Tracking
+- 🗺️ Route Planning
+- 📊 Analytics Dashboard
+- 👥 User Authentication
+- 🔔 Smart Notifications
+- 📱 Responsive Design
+- ⚡ Fast Performance
+- 🎨 Modern UI
+- 🔒 Secure Data Management
 
 ---
 
-## 🚀 Setting Up the Application
+# 📸 Screenshots
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (Version 18 or above recommended)
-- `npm` (packaged with Node.js)
+<div align="center">
 
-### 1. Backend Server Setup
-Navigate to the `server/` directory, install packages, and start the node process on port **5001**:
+### 🏠 Dashboard
+
+<img src="./screenshots/dashboard.png" width="900"/>
+
+<br><br>
+
+### 🗺️ Route Management
+
+<img src="./screenshots/routes.png" width="900"/>
+
+<br><br>
+
+### 📊 Analytics
+
+<img src="./screenshots/analytics.png" width="900"/>
+
+</div>
+
+---
+
+# 🛠 Tech Stack
+
+| Category | Technologies |
+|-----------|--------------|
+| 🎨 Frontend | React.js, Vite |
+| ⚙️ Backend | Node.js, Express.js |
+| 🗄️ Database | MongoDB |
+| 🎨 Styling | Tailwind CSS |
+| 🌐 API | REST API |
+| 💻 Language | JavaScript |
+| 🔧 Tools | Git, GitHub |
+
+---
+
+# 📂 Project Structure
+
 ```bash
-cd server
-npm install
-PORT=5001 npm start
+TransitOps
+│
+├── client
+├── server
+├── screenshots
+├── package.json
+├── README.md
+└── .env
 ```
-*The server will boot up and pre-seed `/server/config/db.json` with initial mock records for vehicles, drivers, trips, maintenance, and expense ledgers.*
 
-### 2. Frontend Client Setup
-In a new terminal window, navigate to the `client/` directory, install packages, and start the dev server:
+---
+
+# ⚙️ Installation
+
+### Clone Repository
+
 ```bash
-cd client
+git clone https://github.com/yourusername/TransitOps.git
+```
+
+### Navigate to Project
+
+```bash
+cd TransitOps
+```
+
+### Install Dependencies
+
+```bash
 npm install
+```
+
+### Configure Environment Variables
+
+```env
+MONGODB_URI=YOUR_DATABASE_URL
+JWT_SECRET=YOUR_SECRET_KEY
+```
+
+### Run Development Server
+
+```bash
 npm run dev
 ```
-*Open **[http://localhost:5173/](http://localhost:5173/)** in your browser to view the application.*
 
 ---
 
-## 🧪 Verification & Programmatic Testing
+# 💡 What I Learned
 
-We have built a dedicated programmatic testing pipeline to verify all business rules logic.
+Working on this hackathon project helped me improve my skills in:
 
-To run the test assertions, navigate to the `server` directory and execute the verification test runner:
-```bash
-cd server
-node verify.js
-```
-
-This runner asserts:
-- Creation of draft trips with over-capacity cargo fails (400 validation error).
-- Dispatching a trip locks vehicle/driver status to `On Trip`.
-- Completing a trip updates the vehicle's odometer, registers fuel consumption, writes fuel logs/expenses, and restores status.
-- Adding a vehicle to maintenance locks it to `In Shop` and prevents dispatch planner selection.
-- Completing maintenance returns the vehicle to `Available`.
+- Full Stack Development
+- Team Collaboration
+- REST API Development
+- Database Integration
+- Responsive UI Design
+- Git & GitHub Workflow
+- Problem Solving Under Time Constraints
+- Rapid Prototyping
 
 ---
 
-## ⚡ Interactive Workflow Walkthrough (1-Click Demo)
-
-We have embedded a single-click simulation directly in the UI dashboard for easy evaluation:
-1. Log in as a **Fleet Manager** (`manager@transitops.com` / `manager123`).
-2. At the top of the **Dashboard**, click the green button labeled **`⚡ Run Demo Workflow (Steps 1-9)`**.
-3. A modal will pop up, demonstrating the step-by-step transaction logs as they complete in the database.
-4. When you close the modal, the dashboard KPIs, operational cost ledgers, fuel efficiency stats, and SVG charts will refresh to display the newly simulated outcomes.
+<p align="center">
+🏆 Built with passion during a Hackathon 🚀
+</p>
 
